@@ -8,6 +8,7 @@ describe("Demoblaze ", () => {
     cy.visit("https://www.demoblaze.com/");
   });
   it("create a user", () => {
+    cy.get(".card").should("be.visible");
     cy.percySnapshot("Page d'accueil ");
     cy.get("#signin2").click();
     cy.wait(1000);
@@ -36,6 +37,9 @@ describe("Demoblaze ", () => {
   });
 
   it("add product to cart", () => {
+    const percyOptions = {
+      percyCSS: "#nameofuser { display: none; }",
+    };
     cy.get("#nameofuser")
       .should("be.visible")
       .and("include.text", `Welcome ${username}`);
@@ -43,7 +47,7 @@ describe("Demoblaze ", () => {
     cy.url().should("include", "prod.html");
     cy.get(".price-container").should("include.text", "$");
     cy.get(".btn-success").click();
-    cy.percySnapshot("Page produit");
+    cy.percySnapshot("Page produit", percyOptions);
 
     cy.on("window:alert", (alertMessage) => {
       expect(alertMessage).to.eq("Product added.");
@@ -54,7 +58,7 @@ describe("Demoblaze ", () => {
       .find("tr")
       .should("exist")
       .and("include.text", "Nexus 6");
-    cy.percySnapshot("Page panier");
+    cy.percySnapshot("Page panier", percyOptions);
   });
 
   it("place order", () => {
