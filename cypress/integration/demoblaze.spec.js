@@ -9,7 +9,9 @@ describe("Demoblaze ", () => {
   });
   it("create a user", () => {
     cy.get(".card").should("be.visible");
-    cy.percySnapshot("Page d'accueil ");
+    cy.percySnapshot("Page d'accueil", {
+      percyCSS: ".carousel-inner { display: none; }",
+    });
     cy.get("#signin2").click();
     cy.wait(1000);
     cy.get("#signInModal").should("be.visible");
@@ -38,7 +40,7 @@ describe("Demoblaze ", () => {
 
   it("add product to cart", () => {
     const percyOptions = {
-      percyCSS: "#nameofuser { display: none; }",
+      percyCSS: "#nameofuser { display: none !important; }",
     };
     cy.get("#nameofuser")
       .should("be.visible")
@@ -47,6 +49,7 @@ describe("Demoblaze ", () => {
     cy.url().should("include", "prod.html");
     cy.get(".price-container").should("include.text", "$");
     cy.get(".btn-success").click();
+    cy.get("#nameofuser").invoke("removeAttr", "style");
     cy.percySnapshot("Page produit", percyOptions);
 
     cy.on("window:alert", (alertMessage) => {
