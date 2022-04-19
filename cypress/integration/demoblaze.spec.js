@@ -7,15 +7,11 @@ describe("Demoblaze ", () => {
   before(() => {
     cy.visit("https://www.demoblaze.com/");
   });
-  it("create a user", () => {
+  it("créer un utilisateur", () => {
     cy.get(".card").should("be.visible");
-    cy.percySnapshot("Page d'accueil", {
-      percyCSS: ".carousel-inner { display: none; }",
-    });
     cy.get("#signin2").click();
     cy.wait(1000);
     cy.get("#signInModal").should("be.visible");
-    cy.percySnapshot("Modal d'inscription");
     cy.get("#sign-username")
       .should("be.visible")
       .type(username)
@@ -24,11 +20,10 @@ describe("Demoblaze ", () => {
     cy.get("#signInModal").find(".btn-primary").click();
   });
 
-  it("login with created user", () => {
+  it("se connecter avec l'utilisateur créé", () => {
     cy.get("#login2").click();
     cy.wait(1000);
     cy.get("#logInModal").should("be.visible");
-    cy.percySnapshot("Modal de connexion");
     cy.get("#loginusername")
       .should("be.visible")
       .type(username)
@@ -38,10 +33,7 @@ describe("Demoblaze ", () => {
     cy.get("#logInModal").find(".btn-primary").click();
   });
 
-  it("add product to cart", () => {
-    const percyOptions = {
-      percyCSS: "#nameofuser { display: none !important; }",
-    };
+  it("ajouter un produit au panier", () => {
     cy.get("#nameofuser")
       .should("be.visible")
       .and("include.text", `Welcome ${username}`);
@@ -50,7 +42,6 @@ describe("Demoblaze ", () => {
     cy.get(".price-container").should("include.text", "$");
     cy.get(".btn-success").click();
     cy.get("#nameofuser").invoke("removeAttr", "style");
-    cy.percySnapshot("Page produit", percyOptions);
 
     cy.on("window:alert", (alertMessage) => {
       expect(alertMessage).to.eq("Product added.");
@@ -61,17 +52,16 @@ describe("Demoblaze ", () => {
       .find("tr")
       .should("exist")
       .and("include.text", "Nexus 6");
-    cy.percySnapshot("Page panier", percyOptions);
   });
 
-  it("place order", () => {
+  it("confirmer et payer la commande", () => {
     cy.intercept({
       method: "POST",
       url: "**/deletecart",
     }).as("purchaseOrder");
+
     cy.get('[data-target="#orderModal"]').click();
     cy.get("#orderModal").should("be.visible");
-    cy.percySnapshot("Modal de paiement");
     cy.get("#name").type(faker.name.findName());
     cy.get("#country").type(faker.address.country());
     cy.get("#city").type(faker.address.cityName());
@@ -84,6 +74,6 @@ describe("Demoblaze ", () => {
       expect(interception.response.body).eq("Item deleted.");
     });
     cy.contains("OK").click();
-    //cy.url().should("include", "index.html");
+    cy.url().should("include", "index.html");
   });
 });
